@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 repos=( "Javafx-WebView-Debugger" )
-repos_ids=( "5811342" )
 
 rm -r artifacts
 mkdir artifacts
@@ -10,14 +9,15 @@ mkdir artifacts
 # do
   index=0
   repo=${repos[$index]}
-  repo_id=${repos_ids[$index]}
-  curl \
-    -L \
-    -o artifacts/$repo.zip \
-    -H "PRIVATE-TOKEN: ${CI_API_TOKEN}" \
-      http://gitlab.com/api/v4/projects/$repo_id/jobs/artifacts/master/download?job=build
+  build_info=$(curl "https://circleci.com/api/v1.1/project/github/CueNinja/${repo}?circle-token=${CI_TOKEN}&limit=1&filter=completed")
+  build_num=$(echo $build_info | jq ". [0] .build_num")
+  artifact_info=$(curl "https://circleci.com/api/v1.1/project/github/CueNinja/${repo}/${build_num}/artifacts?circle-token=${CI_TOKEN}")
+  artifact_url=$(echo $artifact_info | jq ".[] .url" | sed "s/\"//g")
+  curl -o artifacts/${repo}.tar.gz "${artifact_url}?circle-token=${CI_TOKEN}"
 
-  unzip artifacts/${repo}.zip -d artifacts/${repo}
-
+  mkdir artifacts/${repo}/
+  cd artifacts/${repo}/
+  tar -xf ../${repo}.tar.gz
+  cd -
   mv artifacts/${repo}/target/mvn-repo/* site/
 # done
