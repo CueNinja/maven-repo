@@ -1,13 +1,7 @@
 #!/usr/bin/env bash
 
-# curl \
-#   -L \
-#   -o old_site.tar.gz \
-#   -H "PRIVATE-TOKEN: ${CI_API_TOKEN}" \
-#     http://gitlab.com/api/v4/projects/5798522/jobs/artifacts/master/download?job=build
-
 repos=( "Javafx-WebView-Debugger" )
-repos_ids=( "5809845" )
+repos_ids=( "5811342" )
 
 rm -r artifacts
 mkdir artifacts
@@ -27,9 +21,3 @@ mkdir artifacts
 
   mv artifacts/${repo}/target/mvn-repo/* site/
 # done
-
-tar \
-  --exclude="site/css" \
-  --exclude="site/index.html" \
-  --exclude="site/404.html" \
-  -zcvf site.tar.gz site/*
