@@ -1,0 +1,15 @@
+stages:
+  - build
+  - deploy
+
+deploy:
+  stage: deploy
+  image: node
+  artifacts:
+    paths:
+      - site.tar.gz
+  script:
+    - apt-get update && apt-get install -y curl unzip
+    - npm install
+    - ./download_artifacts.sh
+    - npm run deploy
