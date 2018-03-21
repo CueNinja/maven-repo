@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 
-repos=( "Javafx-WebView-Debugger" )
+repos=( "Javafx-WebView-Debugger" "monaco.editor" )
 
 rm -r artifacts
 mkdir artifacts
 
-# for index in {0..1}
-# do
-  index=0
+for index in {0..1}
+do
   repo=${repos[$index]}
   build_info=$(curl "https://circleci.com/api/v1.1/project/github/CueNinja/${repo}?circle-token=${CI_TOKEN}&limit=1&filter=completed")
   build_num=$(echo $build_info | jq ". [0] .build_num")
@@ -19,5 +18,5 @@ mkdir artifacts
   cd artifacts/${repo}/
   tar -xf ../${repo}.tar.gz
   cd -
-  mv artifacts/${repo}/target/mvn-repo/* site/
-# done
+  cp -R artifacts/${repo}/* site/
+done
